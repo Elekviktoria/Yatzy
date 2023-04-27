@@ -17,27 +17,44 @@ class DIE:
         else:
             pass
 
-class PLAYERS:
+class PLAYER:
     
-    antal_spelare = 0
-    dices = np.array([DIE("d1"), DIE("d2"), DIE("d3"), DIE("d4"), DIE("d5")])
-    points_siffror = {"ettor":0, "tvåor":0, "treor":0, "fyror":0, "femmor":0, "sexor":0}
-    points_extra = {"tretal":0, "fyrtal":0, "liten stege":0, "stor stege":0, "kåk":0, "chans":0, "yatzy":0}
-    
-    def __init__(self,name):
-        self.name=name
-    
+    def __init__(self):
+        self.dices = np.array([DIE("d1"), DIE("d2"), DIE("d3"), DIE("d4"), DIE("d5")])    #så att jag kan kalla på't och har dem fysiskt
+        self.points_siffror = {"ettor":0, "tvåor":0, "treor":0, "fyror":0, "femmor":0, "sexor":0} # en dictionary kan nog funka bra
+        self.points_extra = {"tretal":0, "fyrtal":0, "liten stege":0, "stor stege":0, "kåk":0, "chans":0, "yatzy":0}
         
-    def antal(self):
-        antal_spelare = input(int("Hur många spelare?"))
+    def ask(self):
+        # index = list(map(int, input("\nEnter the numbers 1 - 5: ").strip().split()))[:5]
+        index = int(input("Enter the number 1-5"))
+        print("\nList is - ", index)
         
-    def getname(self):
-        for i in range(antal_spelare):
-            self.name = input(str("What is your name?"))
+        """
+        for i in range(index):
+            if index in self.dices:     # i - 1, för index börjar på noll, personen inputar numret från tärningen
+                hold.dices[index[i-1]] = not(hold.dices[index[i-1]])
+        """
+        ### vi gör detta några gånger
+        self.dices[index - 1].hold = not(self.dices[index - 1])
+        for dice in self.dices:
+            dice.roll_die()
+        
         
 class START:
+    
     def __init__(self):
+        self.antal()
+        self.getname()
+        self.players = [PLAYER() for _ in range(self.antal_spelare)]
+    
+    def antal(self):
+        print("Hur många spelare?")
+        self.antal_spelare = int(input())
         
-    def ask():
-        index = list(map(int, input("\nEnter the numbers 0 - 4: ").strip().split()))[:5]
-        print("\nList is - ", index)
+    def getname(self):
+        for i in range(self.antal_spelare):
+            self.name = str(input("What is your name?"))
+
+                
+Game = START()
+print(Game.players[0].ask())
