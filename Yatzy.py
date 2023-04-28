@@ -3,12 +3,11 @@ import numpy as np
 class DIE:
     
     value = 7
-    hold = False
     
     def __init__(self, namn: str):
         self.namn=namn
         self.roll_die()
-        
+        self.hold = False
         
     def roll_die(self):
         if self.hold == False:
@@ -25,19 +24,15 @@ class PLAYER:
         self.points_extra = {"tretal":0, "fyrtal":0, "liten stege":0, "stor stege":0, "kåk":0, "chans":0, "yatzy":0}
         
     def ask(self):
-        # index = list(map(int, input("\nEnter the numbers 1 - 5: ").strip().split()))[:5]
-        index = int(input("Enter the number 1-5"))
-        print("\nList is - ", index)
         
-        """
-        for i in range(index):
-            if index in self.dices:     # i - 1, för index börjar på noll, personen inputar numret från tärningen
-                hold.dices[index[i-1]] = not(hold.dices[index[i-1]])
-        """
+        x = list(map(int, input("\nEnter the numbers 1 - 5: ").strip().split()))[:5]
+        for element in x:
+            hold.dices[element - 1] = not(hold.dices[element - 1])
+
         ### vi gör detta några gånger
-        self.dices[index - 1].hold = not(self.dices[index - 1])
+    """self.dices[index - 1].hold = not(self.dices[index - 1])
         for dice in self.dices:
-            dice.roll_die()
+            dice.roll_die()"""
         
         
 class START:
