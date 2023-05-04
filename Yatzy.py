@@ -6,34 +6,38 @@ class DIE:
     
     def __init__(self, namn: str):
         self.namn=namn
-        self.roll_die()
         self.hold = False
+        self.roll_die()
         
     def roll_die(self):
+        """Rolls the dice, if the attribute "hold" is false, which is determined by the players 
+        after the first round. Also prints the numbers of the dice."""
+    
         if self.hold == False:
             self.value = np.random.randint(1,7)
-            print(self.value)
+            print("Die: {}, value: {}".format(self.namn, self.value))
         else:
-            pass
+            print("Die: {}, value: {}".format(self.namn, self.value))
 
 class PLAYER:
     
     def __init__(self):
-        self.dices = np.array([DIE("d1"), DIE("d2"), DIE("d3"), DIE("d4"), DIE("d5")])    #så att jag kan kalla på't och har dem fysiskt
+        self.dices = np.array([DIE("1"), DIE("2"), DIE("3"), DIE("4"), DIE("5")])    #så att jag kan kalla på't och har dem fysiskt
         self.points_siffror = {"ettor":0, "tvåor":0, "treor":0, "fyror":0, "femmor":0, "sexor":0} # en dictionary kan nog funka bra
         self.points_extra = {"tretal":0, "fyrtal":0, "liten stege":0, "stor stege":0, "kåk":0, "chans":0, "yatzy":0}
         
     def ask(self):
+        """Asks the player to input a list of numbers, locks/unlocks the corresponding dice."""    
         
-        x = list(map(int, input("\nEnter the numbers 1 - 5: ").strip().split()))[:5]
+        x = list(map(int, input("\nEnter which dice to lock, 1 - 5, with spaces between: ").strip().split()))[:5]
+        
         for element in x:
-            hold.dices[element - 1] = not(hold.dices[element - 1])
-
-        ### vi gör detta några gånger
-    """self.dices[index - 1].hold = not(self.dices[index - 1])
-        for dice in self.dices:
-            dice.roll_die()"""
-        
+            self.dices[element - 1].hold = not(self.dices[element - 1].hold)
+       
+        for i in range(2):
+            for dice in self.dices:
+                dice.roll_die()
+            self.ask()
         
 class START:
     
