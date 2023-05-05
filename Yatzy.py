@@ -4,20 +4,23 @@ class DIE:
     
     value = 7
     
-    def __init__(self, namn: str):
-        self.namn=namn
+    def __init__(self, die_name: str):
+        self.die_name=die_name
         self.hold = False
         self.roll_die()
-        
+    
+    def __repr__(self):
+        return "Die: {}, value: {}".format(self.die_name, self.value)
+    
     def roll_die(self):
         """Rolls the dice, if the attribute "hold" is false, which is determined by the players 
         after the first round. Also prints the numbers of the dice."""
     
         if self.hold == False:
             self.value = np.random.randint(1,7)
-            print("Die: {}, value: {}".format(self.namn, self.value))
+            print("Die {}, value: {}".format(self.die_name, self.value))
         else:
-            print("Die: {}, value: {}".format(self.namn, self.value))
+            print("Die {}, value: {}".format(self.die_name, self.value))
 
 class PLAYER:
     
@@ -37,8 +40,20 @@ class PLAYER:
         for i in range(2):
             for dice in self.dices:
                 dice.roll_die()
-            self.ask()
         
+        self.points()
+        self.reset()
+            
+    def points(self):
+        if self.dices[0].value == self.dices[1].value and self.dices[0].value == self.dices[2].value 
+        and self.dices[0].value == self.dices[3].value and self.dices[0].value == self.dices[4].value:
+            self.points_extra = 
+                
+    def reset_dice(self):
+        for i in self.dices:
+            self.dices[i].hold = False
+        self.ask()
+    
 class START:
     
     def __init__(self):
@@ -52,7 +67,7 @@ class START:
         
     def getname(self):
         for i in range(self.antal_spelare):
-            self.name = str(input("What is your name?"))
+            self.name = str(input("What player {}'s name? ".format(i+1)))
 
                 
 Game = START()
