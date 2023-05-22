@@ -58,7 +58,7 @@ class PLAYER:
 
         else:
             self.rounds += 1
-            for i in range(3):
+            for i in range(2):
                 for dice in self.dices:
                     dice.roll_die()
 
@@ -66,7 +66,9 @@ class PLAYER:
 
                 for element in x:
                     self.dices[element - 1].hold = not self.dices[element - 1].hold
-        
+            
+            for dice in self.dices:
+                dice.roll_die()
 
             self.points()
             print(self.categories)
