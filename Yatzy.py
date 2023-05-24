@@ -7,13 +7,13 @@ class DIE:
         self.value = 0
 
     def __repr__(self):
-        return "Die: {}, value: {}".format(self.die_name, self.value)
+        return "Die {}, locked: {}, value: {}".format(self.die_name, self.hold, self.value)
 
     def roll_die(self):
         """Rolls the dice if they are not locked by the player."""
         if not self.hold:
             self.value = np.random.randint(1, 7)
-        print("Die {}, value: {}".format(self.die_name, self.value))
+        print("Die {}, locked: {}, value: {}".format(self.die_name, self.hold, self.value))
 
 
 class PLAYER:
@@ -62,8 +62,21 @@ class PLAYER:
                 for dice in self.dices:
                     dice.roll_die()
 
-                x = list(map(int, input("\nSkriv vilka tärningar du vill låsa, 1 - 5, med mellanslag: ").strip().split()))[:5]
+                try: 
+                    x = list(map(int, input("\nSkriv vilka tärningar du vill låsa, 1 - 5, med mellanslag: ").strip().split()))[:5]
+                except:
+                    try:
+                        print("Skriv bara ints, 1 - 5, tack")
+                        x = list(map(int, input("\nSkriv vilka tärningar du vill låsa, 1 - 5, med mellanslag: ").strip().split()))[:5]
+                    except:
+                        try:
+                            print("Skriv bara ints, 1 - 5, tack!")
+                            x = list(map(int, input("\nSkriv vilka tärningar du vill låsa, 1 - 5, med mellanslag: ").strip().split()))[:5]
+                        except:
+                            raise TypeError("Bara ints med mellanrum mellan")
 
+
+                
                 for element in x:
                     self.dices[element - 1].hold = not self.dices[element - 1].hold
             
@@ -77,80 +90,85 @@ class PLAYER:
     def points(self):
         """Takes in a string and matches it to the categories' dictionary. Checks if the player has the dice
         for the string, and gives points if so."""
+        
         currentvals = np.zeros(5)
 
         for i, dice in enumerate(self.dices):
             currentvals[i] = dice.value
 
-        print(f"Currentvals is {currentvals}")
+        print(f"Currentvals is {currentvals}")      # Utom klassen = snabbare. 
         
         self.which = input("Kategori? Ettor, tvåor, kåk, o.s.v: ").lower()
 
         
-        if self.categories[self.which] == -1:
-            self.categories[self.which] = 0
+        if self.which in self.categories:
+            if self.categories[self.which] == -1:
+                self.categories[self.which] = 0
 
-            if self.which in ["ettor", "tvåor", "treor", "fyror", "femmor", "sexor"]:
-                for i in self.dices:
-                    if i.value == self.num[self.which]:
-                        self.categories[self.which] += self.num[self.which]
-                print(f"{self.which} har värde: {self.categories[self.which]}")
-
-                        
-            elif self.which == "yatzy":
-                for i in range(1, 7):
-                    if np.count_nonzero(currentvals == i) > 4:                        
-                        self.categories[self.which] += 50
-                print(f"Yatzy har värde: {self.categories[self.which]}")
-
-                        
-            elif self.which == "tretal":
-                for i in range(1,7):
-                    if np.count_nonzero(currentvals == i) > 2:
-                        self.categories[self.which] = np.sum(currentvals)
-                print(f"Tretal har värde: {self.categories[self.which]}")
-
-            elif self.which == "fyrtal":
-                for i in range(1,7):
-                    if np.count_nonzero(currentvals == i) > 3:
-                        self.categories[self.which] = np.sum(currentvals)
-                print(f"Fyrtal har värde: {self.categories[self.which]}")
-
-            elif self.which == "kåk":
-                for i in range(1, 7):
-                    if np.count_nonzero(currentvals == i) == 3:
-                        for j in range(1, 7):
-                            if np.count_nonzero(currentvals == j) == 2:
-                                self.categories[self.which] = 25
-                print(f"Kåk har värde: {self.categories[self.which]}")
+                if self.which in ["ettor", "tvåor", "treor", "fyror", "femmor", "sexor"]:
+                    for i in self.dices:
+                        if i.value == self.num[self.which]:
+                            self.categories[self.which] += self.num[self.which]
+                    print(f"{self.which} har värde: {self.categories[self.which]}")
 
 
-            elif self.which == "chans":
-                self.categories[self.which] += np.sum(currentvals)
-                print(f"Chans har värde: {self.categories[self.which]}")
+                elif self.which == "yatzy":
+                    for i in range(1, 7):
+                        if np.count_nonzero(currentvals == i) > 4:                        
+                            self.categories[self.which] += 50
+                    print(f"Yatzy har värde: {self.categories[self.which]}")
 
-            
-            elif self.which == "stor stege":
-                lista = [self.dices[i].value for i in range(5)]
-                a = lista.sort()
-                storted = np.array(lista)
-                if np.allclose(storted, [2, 3, 4, 5, 6]) or np.allclose(storted, [1, 2, 3, 4, 5]):
-                    self.categories[self.which] += 40
-                print(f"Stor stege har värde: {self.categories[self.which]}")
-            
-            elif self.which == "liten stege":
-                if np.count_nonzero(currentvals == 1) > 0 and np.count_nonzero(currentvals == 2) > 0 and np.count_nonzero(currentvals == 3) > 0 and np.count_nonzero(currentvals == 4) > 0:
-                    self.categories[self.which] += 30
-                elif np.count_nonzero(currentvals == 2) > 0 and np.count_nonzero(currentvals == 3) > 0 and np.count_nonzero(currentvals == 4) > 0 and np.count_nonzero(currentvals == 5) > 0:
-                    self.categories[self.which] += 30
-                elif np.count_nonzero(currentvals == 3) > 0 and np.count_nonzero(currentvals == 4) > 0 and np.count_nonzero(currentvals == 5) > 0 and np.count_nonzero(currentvals == 6) > 0:
-                    self.categories[self.which] += 30
-                print(f"Liten stege har värde: {self.categories[self.which]}")
 
+                elif self.which == "tretal":
+                    for i in range(1,7):
+                        if np.count_nonzero(currentvals == i) > 2:
+                            self.categories[self.which] = np.sum(currentvals)
+                    print(f"Tretal har värde: {self.categories[self.which]}")
+
+                elif self.which == "fyrtal":
+                    for i in range(1,7):
+                        if np.count_nonzero(currentvals == i) > 3:
+                            self.categories[self.which] = np.sum(currentvals)
+                    print(f"Fyrtal har värde: {self.categories[self.which]}")
+
+                elif self.which == "kåk":
+                    for i in range(1, 7):
+                        if np.count_nonzero(currentvals == i) == 3:
+                            for j in range(1, 7):
+                                if np.count_nonzero(currentvals == j) == 2:
+                                    self.categories[self.which] = 25
+                    print(f"Kåk har värde: {self.categories[self.which]}")
+
+
+                elif self.which == "chans":
+                    self.categories[self.which] += np.sum(currentvals)
+                    print(f"Chans har värde: {self.categories[self.which]}")
+
+
+                elif self.which == "stor stege":
+                    lista = [self.dices[i].value for i in range(5)]
+                    a = lista.sort()
+                    storted = np.array(lista)
+                    if np.allclose(storted, [2, 3, 4, 5, 6]) or np.allclose(storted, [1, 2, 3, 4, 5]):
+                        self.categories[self.which] += 40
+                    print(f"Stor stege har värde: {self.categories[self.which]}")
+
+                elif self.which == "liten stege":
+                    if np.count_nonzero(currentvals == 1) > 0 and np.count_nonzero(currentvals == 2) > 0 and np.count_nonzero(currentvals == 3) > 0 and np.count_nonzero(currentvals == 4) > 0:
+                        self.categories[self.which] += 30
+                    elif np.count_nonzero(currentvals == 2) > 0 and np.count_nonzero(currentvals == 3) > 0 and np.count_nonzero(currentvals == 4) > 0 and np.count_nonzero(currentvals == 5) > 0:
+                        self.categories[self.which] += 30
+                    elif np.count_nonzero(currentvals == 3) > 0 and np.count_nonzero(currentvals == 4) > 0 and np.count_nonzero(currentvals == 5) > 0 and np.count_nonzero(currentvals == 6) > 0:
+                        self.categories[self.which] += 30
+                    print(f"Liten stege har värde: {self.categories[self.which]}")
+
+                else:
+                    pass
             else:
-                pass
+                print("Välj annan kategori")
+                self.points()
         else:
-            print("Välj annan kategori")
+            print("Stava bättre")
             self.points()
 
     def reset_dice(self):
